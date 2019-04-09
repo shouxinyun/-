@@ -136,3 +136,33 @@ goto: function(){
   })
 },
 
+//小程序页面参数传递规范  WJ
+//避免过度服务器信息请求  数据复用处使用json传递参数  以商品购买模块为模范
+
+//父级页面跳转子页面  参数传递
+purchase:function(){
+    var that=this;
+    var data={};
+    data['aid'] = that.data.aid;
+    data['money'] = that.data.info.sellprice;
+    data['name'] = that.data.info.title;
+    data['pic'] = that.data.info.thumb;
+    data['num'] = 1;
+    data['sellprice'] = that.data.info.sellprice;
+    data = JSON.stringify(data);//将数组转换成json  传递给子级页面
+    wx.navigateTo({
+      url: '/pages/buy/stock?data='+data,
+    })
+  },
+
+//子级页面参数获取   继承父级页面数据   
+ onLoad: function (options) {
+    var data = options.data;
+    console.log(data)
+    var that = this;
+    data=JSON.parse(data);
+    that.setData({
+      info: data
+    })
+ },
+ //*注：数据不宜过大，若数据过大  请使用接口请求  否则数据会丢失  使用中请注意
