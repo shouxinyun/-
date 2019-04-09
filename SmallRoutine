@@ -1,1 +1,138 @@
 //小程序技术开发
+
+公共js  post方法  网络请求  带token安全验证方法  WJ编辑
+//携带token uid 公共请求函数
+  wxPost: function (url, data, cb) {
+    var getdata = data;
+    wx.showLoading({
+      title: '加载中',
+    });
+    var that = this;
+    var token = wx.getStorageSync('token') || 0;
+    var nowtime = Date.parse(new Date());//获取当前时间戳
+    var lasttime = wx.getStorageSync('lasttime');//获取缓存时间
+    //得出时间差
+    var overtime = (nowtime - lasttime) / (1000 * 60 * 60);
+    //console.log(overtime);
+    if (token == 0 || overtime >= 24) { //当token为空或token过期 调用登录静默函数完成携带token公共请求函数
+      //调用登录接口
+      wx.login({
+        success: function (res) {
+          var code = res.code;
+          //静默登陆，获取openid并记录，不获取昵称与头像、性别信息
+          wx.request({
+            url: 'https://pw.xcx.u8g.cn/index.php/XcxApi/Login/getsessionkey',
+            method: 'post',
+            data: {
+              code: code,
+              silent: 1
+            },
+            header: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            success: function (res) {
+              var udata = res.data.arr;
+              var status = res.data.status;
+              //信息写入失败
+              if (status !== 1) {
+                wx.showToast({
+                  icon: 'none',
+                  title: "异常2",
+                  duration: 3000
+                });
+                return false;
+              }
+              var token = res.data.arr.token;
+              //******/写入token/******/
+              var nowtime = Date.parse(new Date());//获取当前时间戳
+              wx.setStorageSync('token', res.data.arr.token);
+              wx.setStorageSync('lasttime', nowtime);
+              //携带token发送请求
+              getdata['uid'] = udata.uid;
+              wx.request({
+                url: url,
+                method: 'post',
+                data: getdata,
+                header: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'token': token
+                },
+                success: function (res) {
+                  wx.hideLoading();
+                  typeof cb == "function" && cb(res);
+                },
+                fail: function (e) {
+                  wx.showToast({
+                    icon: 'none',
+                    title: '网络异常！',
+                    duration: 2000
+                  });
+                },
+              });
+
+            },
+            fail: function (e) {
+              wx.showToast({
+                icon: 'none',
+                title: '网络异常！',
+                duration: 2000
+              });
+              wx.hideLoading();
+            },
+          });
+        }
+      });
+    } else {//当token存在且未过期
+      var userInfo = wx.getStorageSync('userInfo');
+      getdata['uid'] = userInfo.uid;
+      wx.request({
+        url: url,
+        method: 'post',
+        data: getdata,
+        header: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': token
+        },
+        success: function (res) {
+          wx.hideLoading();
+          typeof cb == "function" && cb(res);
+        },
+        fail: function (e) {
+          wx.showToast({
+            icon: 'none',
+            title: '网络异常！',
+            duration: 2000
+          });
+          wx.hideLoading();
+        },
+      });
+    }
+
+  },
+
+
+
+
+//打开地图  地图  导航   WJ编辑
+//使用位置信息需要在app.json中声明
+"permission": {
+	"scope.userLocation": {
+	  "desc": "您的位置信息将用于地址导航"
+	}
+}
+
+//位置导航函数
+goto: function(){
+  wx.getLocation({//获取当前经纬度
+    type: 'wgs84', //返回可以用于wx.openLocation的经纬度，官方提示bug: iOS 6.3.30 type 参数不生效，只会返回 wgs84 类型的坐标信息  
+    success: function (res) {
+      wx.openLocation({//​使用微信内置地图查看位置。
+        latitude: 31.039919,//要去的纬度-地址
+        longitude: 121.694878,//要去的经度-地址
+        name: "平文教育",
+        address: '上海市浦东新区沪南公路8666号'
+      })
+    }
+  })
+},
+
