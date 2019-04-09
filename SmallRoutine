@@ -1,1 +1,24 @@
 //小程序技术开发
+
+//打开地图  地图  导航
+使用位置信息需要在app.json中声明
+"permission": {
+	"scope.userLocation": {
+	  "desc": "您的位置信息将用于地址导航"
+	}
+}
+
+//位置导航函数
+goto: function(){
+  wx.getLocation({//获取当前经纬度
+    type: 'wgs84', //返回可以用于wx.openLocation的经纬度，官方提示bug: iOS 6.3.30 type 参数不生效，只会返回 wgs84 类型的坐标信息  
+    success: function (res) {
+      wx.openLocation({//​使用微信内置地图查看位置。
+        latitude: 31.039919,//要去的纬度-地址
+        longitude: 121.694878,//要去的经度-地址
+        name: "平文教育",
+        address: '上海市浦东新区沪南公路8666号'
+      })
+    }
+  })
+},
