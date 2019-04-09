@@ -1,0 +1,91 @@
+一.地区选择组件
+
+1.引入地区数组
+2.配合van的弹出层配合使用
+案例：
+<van-popup show="{{ show }}" bind:close="onCancel" position="bottom">
+<van-area area-list="{{ areaList }}" value="110101" columns-num="{{ 3 }}" bind:cancel="onCancel" bind:confirm="onConfirm"/>
+</van-popup>
+
+columns-num：控制显示地区级别1.省，2.市，3.区
+
+ //相关js：
+ //地址选择确定函数
+  onConfirm: function (event) {
+    var data = event.detail.values;
+    var that = this;
+    postData = that.data.postData
+    postData['sheng'] = data[0]['name']
+    postData['shi'] = data[1]['name']
+    postData['qu'] = data[2]['name']
+    that.setData({
+      show: false,
+      sheng: data[0]['name'] + data[1]['name'] + data[2]['name']
+    });
+  },
+  //地区选择取消函数
+  onCancel: function () {
+    this.setData({ show: false });
+  },
+  //点击地区选择函数
+  xuanze: function () {
+    this.setData({ show: true });
+  },
+
+二.表单提交相关表单值获取
+
+<form bindsubmit="formSubmit" bindreset="formReset" report-submit='ture'>
+ <van-cell-group>
+    <van-field value="{{ addres.name }}"  label="收件人"  placeholder="请输入用户名" data-key="name" bind:change="setArr"/>
+    <van-field value="{{ addres.tel }}" label="联系电话"  placeholder="请输入手机号" data-key="tel" bind:change="setArr"/>
+    <van-field value="{{ sheng }}"  label="省份" placeholder="请选择省份"  placeholder-style='color:#39C995'  readonly bindtap="xuanze"/>
+    <van-popup show="{{ show }}" bind:close="onCancel" position="bottom">
+        <van-area area-list="{{ areaList }}" value="110101" columns-num="{{ 3 }}"     bind:cancel="onCancel"  bind:confirm="onConfirm"/>
+    </van-popup>
+    <van-field value="{{ addres.address }}" label="详细地址" type="textarea" placeholder="请输入详细地址" rows="1" autosize data-key="address" bind:change="setArr"/>
+<view class='danx'>
+    <view>是否设为默认地址</view>
+    <van-switch checked="{{ checked }}" size="24px" active-color="#39C995" bind:change="onChange"/>
+</view>
+
+  </van-cell-group>
+    <button class='but' formType="submit">确定</button>
+  </form>
+
+
+ //相关js:
+ //表单数据获取记录
+  setArr: function (e) {
+    var that = this;
+    var key = e.target.dataset.key;
+    var postData = that.data.postData;
+    postData[key] = e.detail;
+    that.setData({
+      postData: postData
+    })
+    console.log(postData);
+  },
+  //获取地址详情
+  getAddres: function (aid) {
+    var that = this;
+    var data = {};
+    var url = app.d.ceshiUrl + '/Index/editMyAddress';
+    data['aid'] = aid;
+    app.wxPost(url, data, function (res) {
+      if (res.data.ok == 1) {
+        var addres = res.data.extra.dataArr;
+        var postData={};
+        postData['sheng'] = addres['sheng'];
+        postData['shi'] = addres['shi'];
+        postData['qu'] = addres['qu'];
+        postData['address'] = addres['address'];
+        postData['tel'] = addres['tel'];
+        postData['name'] = addres['name'];
+        that.setData({
+          addres: addres,
+          sheng: addres['sheng'] + addres['shi'] + addres['qu'] ,
+          postData: postData
+        })
+      }
+    });
+  },
