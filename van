@@ -1,8 +1,8 @@
-一.地区选择组件
+//一.地区选择组件
 
-1.引入地区数组
-2.配合van的弹出层配合使用
-案例：
+//1.引入地区数组
+//2.配合van的弹出层配合使用
+//案例：
 <van-popup show="{{ show }}" bind:close="onCancel" position="bottom">
 <van-area area-list="{{ areaList }}" value="110101" columns-num="{{ 3 }}" bind:cancel="onCancel" bind:confirm="onConfirm"/>
 </van-popup>
