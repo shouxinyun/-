@@ -1,13 +1,12 @@
-一.地区选择组件
-
-1.引入地区数组
-2.配合van的弹出层配合使用
-案例：
+//一.地区选择组件
+//1.引入地区数组
+//2.配合van的弹出层配合使用
+//案例：
 <van-popup show="{{ show }}" bind:close="onCancel" position="bottom">
 <van-area area-list="{{ areaList }}" value="110101" columns-num="{{ 3 }}" bind:cancel="onCancel" bind:confirm="onConfirm"/>
 </van-popup>
 
-columns-num：控制显示地区级别1.省，2.市，3.区
+//columns-num：控制显示地区级别1.省，2.市，3.区
 
  //相关js：
  //地址选择确定函数
@@ -32,7 +31,7 @@ columns-num：控制显示地区级别1.省，2.市，3.区
     this.setData({ show: true });
   },
 
-二.表单提交相关表单值获取
+//二.表单提交相关表单值获取
 
 <form bindsubmit="formSubmit" bindreset="formReset" report-submit='ture'>
  <van-cell-group>
@@ -89,4 +88,3 @@ columns-num：控制显示地区级别1.省，2.市，3.区
       }
     });
   },
-//WJ19.4.9
