@@ -1,7 +1,9 @@
 //小程序技术开发
 
 //公共js  post方法  网络请求  带token安全验证方法  WJ编辑
+
 //携带token uid 公共请求函数
+
   wxPost: function (url, data, cb) {
     var getdata = data;
     wx.showLoading({
@@ -137,9 +139,11 @@ goto: function(){
 },
 
 //小程序页面参数传递规范  WJ
+
 //避免过度服务器信息请求  数据复用处使用json传递参数  以商品购买模块为模范
 
 //父级页面跳转子页面  参数传递
+
 purchase:function(){
     var that=this;
     var data={};
