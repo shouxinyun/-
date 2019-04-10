@@ -1,6 +1,6 @@
 //小程序技术开发
 
-公共js  post方法  网络请求  带token安全验证方法  WJ编辑
+//公共js  post方法  网络请求  带token安全验证方法  WJ编辑
 //携带token uid 公共请求函数
   wxPost: function (url, data, cb) {
     var getdata = data;
